@@ -1,0 +1,43 @@
+name: CI/CD Pipeline for Fashion MNIST App
+
+# Trigger the pipeline on push or pull request to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout your code from GitHub repository
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Set up Python environment
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+        cache: 'pip'
+
+    # 3. Install Project Dependencies
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest flask tensorflow numpy pillow werkzeug
+
+    # 4. Run Automated Tests (CI)
+    - name: Run Unit Tests
+      run: |
+        pytest test_app.py
+
+    # 5. Continuous Deployment (CD Step - Optional Example)
+    # If tests pass, you can add a step here to trigger deployment 
+    # to Render, Heroku, or a cloud server.
+    - name: Deployment Notification
+      if: success()
+      run: |
+        echo "Tests passed successfully! Ready for deployment."
